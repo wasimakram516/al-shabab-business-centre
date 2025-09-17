@@ -1,11 +1,23 @@
 "use client";
-import { Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
+import { useState, useRef, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Box,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useEffect, useRef } from "react";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 export default function VideoModal({ open, onClose, media }) {
+  const videos = media?.filter((m) => m.type === "video") || [];
+  const [currentIndex, setCurrentIndex] = useState(0);
   const videoRef = useRef(null);
+
   const autoPlay = true;
+
   useEffect(() => {
     if (autoPlay && videoRef.current) {
       const playPromise = videoRef.current.play();
@@ -15,7 +27,17 @@ export default function VideoModal({ open, onClose, media }) {
         });
       }
     }
-  }, [autoPlay]);
+  }, [autoPlay, currentIndex]);
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + videos.length) % videos.length);
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % videos.length);
+  };
+
+  if (videos.length === 0) return null;
 
   return (
     <Dialog
@@ -41,7 +63,7 @@ export default function VideoModal({ open, onClose, media }) {
         >
           <CloseIcon
             sx={{
-              fontSize: "4rem",
+              fontSize: "2rem",
               color: "error.main",
               backgroundColor: "rgba(255,255,255,0.8)",
               borderRadius: "50%",
@@ -56,22 +78,91 @@ export default function VideoModal({ open, onClose, media }) {
           />
         </IconButton>
       </DialogTitle>
-      <DialogContent dividers>
-        {media
-          ?.filter((m) => m.type === "video")
-          .map((vid, i) => (
-            <video
-              key={vid.fileUrl || i}
-              ref={videoRef}
-              src={vid.fileUrl}
-              controls
-              autoPlay
-              style={{
-                width: "100%",
-                borderRadius: "8px",
-              }}
-            />
-          ))}
+
+      <DialogContent
+        dividers
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Box sx={{ position: "relative", width: "100%", textAlign: "center" }}>
+          {/* Current Video */}
+          <video
+            key={videos[currentIndex].fileUrl || currentIndex}
+            ref={videoRef}
+            src={videos[currentIndex].fileUrl}
+            controls
+            autoPlay
+            style={{
+              width: "100%",
+              borderRadius: "8px",
+            }}
+          />
+
+          {/* Show nav only if multiple */}
+          {videos.length > 1 && (
+            <>
+              {/* Prev */}
+              <IconButton
+                onClick={handlePrev}
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: 16,
+                  transform: "translateY(-50%)",
+                  bgcolor: "rgba(0,0,0,0.4)",
+                  color: "white",
+                  "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+                }}
+              >
+                <ArrowBackIosNewIcon />
+              </IconButton>
+
+              {/* Next */}
+              <IconButton
+                onClick={handleNext}
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  right: 16,
+                  transform: "translateY(-50%)",
+                  bgcolor: "rgba(0,0,0,0.4)",
+                  color: "white",
+                  "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+                }}
+              >
+                <ArrowForwardIosIcon />
+              </IconButton>
+
+              {/* Dots */}
+              <Box
+                sx={{
+                  position: "absolute",
+                  bottom: 8,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  display: "flex",
+                  gap: 1,
+                }}
+              >
+                {videos.map((_, i) => (
+                  <Box
+                    key={i}
+                    sx={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: "50%",
+                      bgcolor:
+                        i === currentIndex ? "white" : "rgba(255,255,255,0.5)",
+                    }}
+                  />
+                ))}
+              </Box>
+            </>
+          )}
+        </Box>
       </DialogContent>
     </Dialog>
   );

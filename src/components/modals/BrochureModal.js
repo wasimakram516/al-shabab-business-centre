@@ -47,11 +47,14 @@ export default function BrochureModal({ open, onClose, fileUrl }) {
       </IconButton>
 
       <DialogContent sx={{ p: 0, height: "100%" }}>
-        <iframe
-          src={fileUrl}
-          style={{ width: "100%", height: "100%", border: "none" }}
-          title="PDF Viewer"
-        />
+<iframe
+  src={`/pdfjs/web/viewer.html?file=${encodeURIComponent(
+    `${window.location.origin}/api/proxy-pdf?url=${fileUrl}`
+  )}`}
+  style={{ width: "100%", height: "100%", border: "none" }}
+  title="PDF Viewer"
+/>
+
       </DialogContent>
     </Dialog>
   );
