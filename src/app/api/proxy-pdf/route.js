@@ -1,28 +1,37 @@
+import { NextResponse } from "next/server";
+
 export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const url = searchParams.get("url");
+
+  if (!url) {
+    return NextResponse.json({ error: "Missing url param" }, { status: 400 });
+  }
+
   try {
-    const { searchParams } = new URL(req.url);
-    const url = searchParams.get("url");
-
-    if (!url) {
-      return new Response("Missing PDF url", { status: 400 });
-    }
-
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: "GET",
+      headers: { "User-Agent": "Next.js PDF Proxy" },
+    });
 
     if (!response.ok) {
-      return new Response("Error fetching PDF", { status: response.status });
+      return NextResponse.json(
+        { error: `Failed to fetch PDF: ${response.statusText}` },
+        { status: response.status }
+      );
     }
 
-    const buffer = await response.arrayBuffer();
+    const arrayBuffer = await response.arrayBuffer();
 
-    return new Response(buffer, {
-      status: 200,
+    return new NextResponse(arrayBuffer, {
       headers: {
         "Content-Type": "application/pdf",
-        "Cache-Control": "public, max-age=31536000, immutable",
+        "Cache-Control": "public, max-age=86400, immutable",
+        "Content-Disposition": "inline",
       },
     });
-  } catch (error) {
-    return new Response("Proxy error: " + error.message, { status: 500 });
+  } catch (err) {
+    console.error("Proxy fetch failed:", err);
+    return NextResponse.json({ error: "Proxy fetch failed" }, { status: 500 });
   }
 }

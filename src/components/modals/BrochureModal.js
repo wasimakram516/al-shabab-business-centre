@@ -5,15 +5,41 @@ import { useEffect, useState } from "react";
 
 export default function BrochureModal({ open, onClose, fileUrl }) {
   const [viewerUrl, setViewerUrl] = useState("");
+
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setViewerUrl(
-        `/pdfjs/web/viewer.html?file=${encodeURIComponent(
-          `${window.location.origin}/api/proxy-pdf?url=${fileUrl}`
-        )}`
-      );
-    }
-  }, [fileUrl]);
+    if (!fileUrl || !open) return;
+
+    let revokeUrl = null;
+
+    const fetchAndCache = async () => {
+      try {
+        const cache = await caches.open("pdf-cache");
+        const cachedResponse = await cache.match(fileUrl);
+
+        let blob;
+        if (cachedResponse) {
+          blob = await cachedResponse.blob();
+        } else {
+          const response = await fetch(`/api/proxy-pdf?url=${encodeURIComponent(fileUrl)}`);
+          blob = await response.blob();
+          cache.put(fileUrl, response.clone());
+        }
+
+        const blobUrl = URL.createObjectURL(blob);
+        revokeUrl = blobUrl;
+        setViewerUrl(`/pdfjs/web/viewer.html?file=${encodeURIComponent(blobUrl)}`);
+      } catch (err) {
+        console.error("PDF fetch/cache failed:", err);
+        setViewerUrl(fileUrl);
+      }
+    };
+
+    fetchAndCache();
+
+    return () => {
+      if (revokeUrl) URL.revokeObjectURL(revokeUrl);
+    };
+  }, [fileUrl, open]);
 
   if (!viewerUrl) return <p>Loading PDF…</p>;
 
@@ -33,9 +59,7 @@ export default function BrochureModal({ open, onClose, fileUrl }) {
         },
       }}
       sx={{
-        "& .MuiDialog-container": {
-          alignItems: "flex-start",
-        },
+        "& .MuiDialog-container": { alignItems: "flex-start" },
       }}
     >
       <IconButton
@@ -51,10 +75,7 @@ export default function BrochureModal({ open, onClose, fileUrl }) {
             padding: "0.5rem",
             cursor: "pointer",
             transition: "all 0.3s ease",
-            "&:hover": {
-              backgroundColor: "rgba(0,0,0,0.8)",
-              color: "#fff",
-            },
+            "&:hover": { backgroundColor: "rgba(0,0,0,0.8)", color: "#fff" },
           }}
         />
       </IconButton>
