@@ -73,6 +73,21 @@ export default function MenuPage() {
       .catch((err) => console.error("Config fetch error:", err));
   }, []);
 
+  const handleClick = (e, modal) => {
+    const btn = e.currentTarget;
+    btn.classList.remove("clicked");
+    void btn.offsetWidth;
+    btn.classList.add("clicked");
+    setOpenModal(modal);
+  };
+
+  const handleClose = () => {
+    document.querySelectorAll(".clicked").forEach((btn) => {
+      btn.classList.remove("clicked");
+    });
+    setOpenModal(null);
+  };
+
   return (
     <Box
       sx={{
@@ -144,7 +159,7 @@ export default function MenuPage() {
           <Button
             key={index}
             variant="contained"
-            onClick={() => setOpenModal(btn.text.toLowerCase())}
+            onClick={(e) => handleClick(e, btn.text.toLowerCase())}
             sx={{
               position: "absolute",
               top: btn.y,
@@ -167,14 +182,17 @@ export default function MenuPage() {
                 background: "radial-gradient(circle at 30% 30%, #444, #111)",
                 transform: "scale(1.05)",
               },
-              "&:active": {
-                transform: "scale(0.95)",
-                borderColor: "#FFD700",
-                background: "radial-gradient(circle at 30% 30%, #666, #222)",
+              "&.clicked": {
+                animation: "clickPulse 0.3s ease",
               },
               "@keyframes floatY": {
                 "0%, 100%": { transform: "translateY(0)" },
-                "50%": { transform: "translateY(-20px)" },
+                "50%": { transform: "translateY(-25px)" },
+              },
+              "@keyframes clickPulse": {
+                "0%": { transform: "scale(1)" },
+                "50%": { transform: "scale(0.9)" },
+                "100%": { transform: "scale(1)" },
               },
             }}
           >
@@ -208,27 +226,27 @@ export default function MenuPage() {
       {/* Modals */}
       <PhotosModal
         open={openModal === "photos"}
-        onClose={() => setOpenModal(null)}
+        onClose={handleClose}
         media={config?.media}
       />
       <BrochureModal
         open={openModal === "brochure"}
-        onClose={() => setOpenModal(null)}
+        onClose={handleClose}
         fileUrl={config?.media.find((m) => m.type === "pdf")?.fileUrl}
       />
       <VideoModal
         open={openModal === "video"}
-        onClose={() => setOpenModal(null)}
+        onClose={handleClose}
         media={config?.media}
       />
       <LocationModal
         open={openModal === "location"}
-        onClose={() => setOpenModal(null)}
+        onClose={handleClose}
         location={config?.location}
       />
       <SignupModal
         open={openModal === "sign-up"}
-        onClose={() => setOpenModal(null)}
+        onClose={handleClose}
         signupLink={config?.signupLink}
       />
     </Box>

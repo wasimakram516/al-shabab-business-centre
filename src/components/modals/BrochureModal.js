@@ -7,56 +7,49 @@ export default function BrochureModal({ open, onClose, fileUrl }) {
   const [viewerUrl, setViewerUrl] = useState("");
 
   useEffect(() => {
-    if (!fileUrl || !open) return;
-
-    let revokeUrl = null;
+    if (!fileUrl) return;
 
     const fetchAndCache = async () => {
       try {
         const cache = await caches.open("pdf-cache");
-        const cachedResponse = await cache.match(fileUrl);
 
-        let blob;
-        if (cachedResponse) {
-          // load from local cache
-          blob = await cachedResponse.blob();
-        } else {
-          const response = await fetch(
-            `/api/proxy-pdf?url=${encodeURIComponent(fileUrl)}`
+        // check if cached
+        const cached = await cache.match(fileUrl);
+        if (cached) {
+          const blob = await cached.blob();
+          const blobUrl = URL.createObjectURL(blob);
+          setViewerUrl(
+            `/pdfjs/web/viewer.html?file=${encodeURIComponent(blobUrl)}`
           );
-
-          if (!response.ok) throw new Error("Failed to fetch PDF");
-
-          blob = await response.blob();
-
-          // save original response into cache for future use
-          cache.put(fileUrl, response.clone());
+          return;
         }
 
-        // make a local blob URL to feed into PDF.js viewer
+        // fetch new
+        const response = await fetch(fileUrl, { mode: "cors" });
+
+        if (!response.ok) throw new Error("Failed to fetch PDF");
+
+        const responseForCache = response.clone();
+
+        await cache.put(fileUrl, responseForCache);
+
+        // consume the body for viewer
+        const blob = await response.blob();
         const blobUrl = URL.createObjectURL(blob);
-        revokeUrl = blobUrl;
 
         setViewerUrl(
           `/pdfjs/web/viewer.html?file=${encodeURIComponent(blobUrl)}`
         );
       } catch (err) {
-        console.error("PDF fetch/cache failed:", err);
-
+        console.error("PDF caching failed:", err);
         setViewerUrl(
-          `/pdfjs/web/viewer.html?file=${encodeURIComponent(
-            `${window.location.origin}/api/proxy-pdf?url=${fileUrl}`
-          )}`
-        );
+          `/pdfjs/web/viewer.html?file=${encodeURIComponent(fileUrl)}`
+        ); // fallback
       }
     };
 
     fetchAndCache();
-
-    return () => {
-      if (revokeUrl) URL.revokeObjectURL(revokeUrl);
-    };
-  }, [fileUrl, open]);
+  }, [fileUrl]);
 
   return (
     <Dialog
@@ -97,11 +90,17 @@ export default function BrochureModal({ open, onClose, fileUrl }) {
       </IconButton>
 
       <DialogContent sx={{ p: 0, height: "100%" }}>
-        <iframe
-          src={viewerUrl}
-          style={{ width: "100%", height: "100%", border: "none" }}
-          title="PDF Viewer"
-        />
+        {viewerUrl ? (
+          <iframe
+            src={viewerUrl}
+            style={{ width: "100%", height: "100%", border: "none" }}
+            title="PDF Viewer"
+          />
+        ) : (
+          <p style={{ textAlign: "center", marginTop: "2rem" }}>
+            {fileUrl ? "Loading PDF…" : "No brochure available."}
+          </p>
+        )}
       </DialogContent>
     </Dialog>
   );
