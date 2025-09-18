@@ -18,19 +18,36 @@ export default function BrochureModal({ open, onClose, fileUrl }) {
 
         let blob;
         if (cachedResponse) {
+          // load from local cache
           blob = await cachedResponse.blob();
         } else {
-          const response = await fetch(`/api/proxy-pdf?url=${encodeURIComponent(fileUrl)}`);
+          const response = await fetch(
+            `/api/proxy-pdf?url=${encodeURIComponent(fileUrl)}`
+          );
+
+          if (!response.ok) throw new Error("Failed to fetch PDF");
+
           blob = await response.blob();
+
+          // save original response into cache for future use
           cache.put(fileUrl, response.clone());
         }
 
+        // make a local blob URL to feed into PDF.js viewer
         const blobUrl = URL.createObjectURL(blob);
         revokeUrl = blobUrl;
-        setViewerUrl(`/pdfjs/web/viewer.html?file=${encodeURIComponent(blobUrl)}`);
+
+        setViewerUrl(
+          `/pdfjs/web/viewer.html?file=${encodeURIComponent(blobUrl)}`
+        );
       } catch (err) {
         console.error("PDF fetch/cache failed:", err);
-        setViewerUrl(fileUrl);
+
+        setViewerUrl(
+          `/pdfjs/web/viewer.html?file=${encodeURIComponent(
+            `${window.location.origin}/api/proxy-pdf?url=${fileUrl}`
+          )}`
+        );
       }
     };
 
@@ -40,8 +57,6 @@ export default function BrochureModal({ open, onClose, fileUrl }) {
       if (revokeUrl) URL.revokeObjectURL(revokeUrl);
     };
   }, [fileUrl, open]);
-
-  if (!viewerUrl) return <p>Loading PDF…</p>;
 
   return (
     <Dialog
@@ -58,9 +73,7 @@ export default function BrochureModal({ open, onClose, fileUrl }) {
           overflow: "hidden",
         },
       }}
-      sx={{
-        "& .MuiDialog-container": { alignItems: "flex-start" },
-      }}
+      sx={{ "& .MuiDialog-container": { alignItems: "flex-start" } }}
     >
       <IconButton
         onClick={onClose}
@@ -75,7 +88,10 @@ export default function BrochureModal({ open, onClose, fileUrl }) {
             padding: "0.5rem",
             cursor: "pointer",
             transition: "all 0.3s ease",
-            "&:hover": { backgroundColor: "rgba(0,0,0,0.8)", color: "#fff" },
+            "&:hover": {
+              backgroundColor: "rgba(0,0,0,0.8)",
+              color: "#fff",
+            },
           }}
         />
       </IconButton>
