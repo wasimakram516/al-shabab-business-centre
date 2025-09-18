@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,22 +14,10 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 
 export default function VideoModal({ open, onClose, media }) {
-  const videos = media?.filter((m) => m.type === "video") || [];
+  const videos = [
+    "https://drive.google.com/file/d/1QBQV6hJdLViqjWIYKolD9FEMR7Lv1uaB/preview",
+  ];
   const [currentIndex, setCurrentIndex] = useState(0);
-  const videoRef = useRef(null);
-
-  const autoPlay = true;
-
-  useEffect(() => {
-    if (autoPlay && videoRef.current) {
-      const playPromise = videoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((err) => {
-          console.warn("Autoplay with sound blocked by browser:", err);
-        });
-      }
-    }
-  }, [autoPlay, currentIndex]);
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev - 1 + videos.length) % videos.length);
@@ -107,24 +95,21 @@ export default function VideoModal({ open, onClose, media }) {
       >
         <Box sx={{ position: "relative", width: "100%", textAlign: "center" }}>
           {/* Current Video */}
-          <video
-            key={videos[currentIndex].fileUrl || currentIndex}
-            ref={videoRef}
-            src={videos[currentIndex].fileUrl}
-            controls
-            autoPlay
+          <iframe
+            src={videos[currentIndex]}
+            allow="autoplay"
+            allowFullScreen
             style={{
               width: "100%",
-              height: "auto",
-              maxHeight: "80vh",
+              height: "80vh",
+              border: "none",
               borderRadius: "8px",
             }}
-          />
+          ></iframe>
 
           {/* Show nav only if multiple */}
           {videos.length > 1 && (
             <>
-              {/* Prev */}
               <IconButton
                 onClick={handlePrev}
                 sx={{
@@ -139,8 +124,6 @@ export default function VideoModal({ open, onClose, media }) {
               >
                 <ArrowBackIosNewIcon />
               </IconButton>
-
-              {/* Next */}
               <IconButton
                 onClick={handleNext}
                 sx={{
@@ -155,34 +138,6 @@ export default function VideoModal({ open, onClose, media }) {
               >
                 <ArrowForwardIosIcon />
               </IconButton>
-
-              {/* Dots */}
-              <Box
-                sx={{
-                  position: "absolute",
-                  bottom: 8,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  display: "flex",
-                  gap: 1,
-                }}
-              >
-                {videos.map((_, i) => (
-                  <Box
-                    key={i}
-                    onClick={() => setCurrentIndex(i)}
-                    sx={{
-                      width: 12,
-                      height: 12,
-                      borderRadius: "50%",
-                      cursor: "pointer",
-                      bgcolor:
-                        i === currentIndex ? "maroon" : "rgba(255,255,255,0.5)",
-                      transition: "all 0.3s ease",
-                    }}
-                  />
-                ))}
-              </Box>
             </>
           )}
         </Box>

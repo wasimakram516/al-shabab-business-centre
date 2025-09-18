@@ -12,31 +12,69 @@ import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import { motion, AnimatePresence } from "framer-motion";
+
+// Variants for sliding
+const slideVariants = {
+  enter: (direction) => ({
+    x: direction > 0 ? 300 : -300,
+    opacity: 0,
+    scale: 0.95,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+    zIndex: 1,
+    transition: { type: "spring", stiffness: 300, damping: 30 },
+  },
+  exit: (direction) => ({
+    x: direction > 0 ? -300 : 300,
+    opacity: 0,
+    scale: 0.95,
+    zIndex: 0,
+    transition: { duration: 0.3 },
+  }),
+};
 
 export default function PhotosModal({ open, onClose, media }) {
   const images = media?.filter((m) => m.type === "image") || [];
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  const pauseSlideshow = () => {
+    setPaused(true);
+    // Resume after 10s
+    setTimeout(() => setPaused(false), 10000);
+  };
 
   const handlePrev = () => {
+    setDirection(-1);
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+    pauseSlideshow();
   };
 
   const handleNext = () => {
+    setDirection(1);
     setCurrentIndex((prev) => (prev + 1) % images.length);
+    pauseSlideshow();
   };
 
   const handleDotClick = (i) => {
+    setDirection(i > currentIndex ? 1 : -1);
     setCurrentIndex(i);
+    pauseSlideshow();
   };
 
-  // Auto slideshow
   useEffect(() => {
-    if (!open || images.length === 0) return;
+    if (!open || images.length === 0 || paused) return;
     const interval = setInterval(() => {
+      setDirection(1);
       setCurrentIndex((prev) => (prev + 1) % images.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, [open, images.length]);
+  }, [open, images.length, paused]);
 
   if (images.length === 0) return null;
 
@@ -106,7 +144,7 @@ export default function PhotosModal({ open, onClose, media }) {
           p: 0,
         }}
       >
-        {/* Image with arrows */}
+        {/* Image with sliding animation */}
         <Box
           sx={{
             position: "relative",
@@ -115,53 +153,65 @@ export default function PhotosModal({ open, onClose, media }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            overflow: "hidden",
+            overflow: "hidden", // only clips the sliding images
           }}
         >
-          <img
-            src={images[currentIndex].fileUrl}
-            alt={images[currentIndex].fileName}
-            style={{
-              width: "100%",
-              height: "100%",
-              maxHeight: "50vh",
-              borderRadius: "8px",
-              objectFit: "cover",
-            }}
-          />
-
-          {/* Prev button */}
-          <IconButton
-            onClick={handlePrev}
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: 16,
-              transform: "translateY(-50%)",
-              bgcolor: "rgba(0,0,0,0.4)",
-              color: "white",
-              "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
-            }}
-          >
-            <ArrowBackIosNewIcon />
-          </IconButton>
-
-          {/* Next button */}
-          <IconButton
-            onClick={handleNext}
-            sx={{
-              position: "absolute",
-              top: "50%",
-              right: 16,
-              transform: "translateY(-50%)",
-              bgcolor: "rgba(0,0,0,0.4)",
-              color: "white",
-              "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
-            }}
-          >
-            <ArrowForwardIosIcon />
-          </IconButton>
+          <AnimatePresence initial={false} custom={direction}>
+            <motion.img
+              key={currentIndex}
+              src={images[currentIndex].fileUrl}
+              alt={images[currentIndex].fileName}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.4 }}
+              style={{
+                width: "100%",
+                height: "100%",
+                maxHeight: "50vh",
+                borderRadius: "8px",
+                objectFit: "cover",
+                position: "absolute",
+              }}
+            />
+          </AnimatePresence>
         </Box>
+
+        {/* Prev button OUTSIDE image box */}
+        <IconButton
+          onClick={handlePrev}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: 16,
+            transform: "translateY(-50%)",
+            bgcolor: "rgba(0,0,0,0.4)",
+            color: "white",
+            "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+            zIndex: 1000,
+          }}
+        >
+          <ArrowBackIosNewIcon />
+        </IconButton>
+
+        {/* Next button OUTSIDE image box */}
+        <IconButton
+          onClick={handleNext}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            right: 16,
+            transform: "translateY(-50%)",
+            bgcolor: "rgba(0,0,0,0.4)",
+            color: "white",
+            "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+            zIndex: 1000,
+          }}
+        >
+          <ArrowForwardIosIcon />
+        </IconButton>
 
         {/* Dots */}
         <Box

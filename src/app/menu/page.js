@@ -21,42 +21,102 @@ import { useRouter } from "next/navigation";
 const buttonsConfig = [
   {
     text: "Photos",
-    size: "clamp(8rem, 20vw, 22rem)",
+    size: { xs: "8rem", sm: "22rem", md: "22rem", lg: "28rem", xl: "34rem" },
     x: "15%",
     y: "33%",
-    icon: <CameraAltIcon sx={{ fontSize: { xs: "3rem", sm: "5rem", md: "8rem" } }} />,
+    icon: (
+      <CameraAltIcon
+        sx={{
+          fontSize: {
+            xs: "3rem",
+            sm: "5rem",
+            md: "8rem",
+            lg: "10rem",
+            xl: "12rem",
+          },
+        }}
+      />
+    ),
     delay: "0s",
   },
   {
     text: "Brochure",
-    size: "clamp(10rem, 25vw, 28rem)",
+    size: { xs: "10rem", sm: "28rem", md: "22rem", lg: "28rem", xl: "36rem" },
     x: "52%",
     y: "40%",
-    icon: <MenuBookIcon sx={{ fontSize: { xs: "4rem", sm: "6rem", md: "10rem" } }} />,
+    icon: (
+      <MenuBookIcon
+        sx={{
+          fontSize: {
+            xs: "4rem",
+            sm: "6rem",
+            md: "10rem",
+            lg: "12rem",
+            xl: "14rem",
+          },
+        }}
+      />
+    ),
     delay: "1s",
   },
   {
     text: "Video",
-    size: "clamp(8rem, 20vw, 22rem)",
+    size: { xs: "8rem", sm: "22rem", md: "22rem", lg: "28rem", xl: "34rem" },
     x: "10%",
     y: "56%",
-    icon: <PlayCircleFilledIcon sx={{ fontSize: { xs: "3rem", sm: "5rem", md: "8rem" } }} />,
+    icon: (
+      <PlayCircleFilledIcon
+        sx={{
+          fontSize: {
+            xs: "3rem",
+            sm: "5rem",
+            md: "8rem",
+            lg: "10rem",
+            xl: "12rem",
+          },
+        }}
+      />
+    ),
     delay: "2s",
   },
   {
     text: "Location",
-    size: "clamp(8rem, 20vw, 22rem)",
+    size: { xs: "8rem", sm: "22rem", md: "22rem", lg: "28rem", xl: "34rem" },
     x: "55%",
     y: "68%",
-    icon: <LocationOnIcon sx={{ fontSize: { xs: "3rem", sm: "5rem", md: "8rem" } }} />,
+    icon: (
+      <LocationOnIcon
+        sx={{
+          fontSize: {
+            xs: "3rem",
+            sm: "5rem",
+            md: "8rem",
+            lg: "10rem",
+            xl: "12rem",
+          },
+        }}
+      />
+    ),
     delay: "1.5s",
   },
   {
     text: "Sign-Up",
-    size: "clamp(8rem, 20vw, 22rem)",
+    size: { xs: "8rem", sm: "22rem", md: "22rem", lg: "28rem", xl: "34rem" },
     x: "15%",
     y: "80%",
-    icon: <HowToRegIcon sx={{ fontSize: { xs: "3rem", sm: "5rem", md: "8rem" } }} />,
+    icon: (
+      <HowToRegIcon
+        sx={{
+          fontSize: {
+            xs: "3rem",
+            sm: "5rem",
+            md: "8rem",
+            lg: "10rem",
+            xl: "12rem",
+          },
+        }}
+      />
+    ),
     delay: "2.5s",
   },
 ];
@@ -66,6 +126,8 @@ export default function MenuPage() {
   const [config, setConfig] = useState(null);
   const [openModal, setOpenModal] = useState(null);
 
+  // preload sound
+  const [buttonSound] = useState(() => new Audio("/buttonSound.wav"));
   useInactivityRedirect(3 * 60 * 1000, "/"); // 3 minutes inactivity redirect to home
 
   useEffect(() => {
@@ -76,6 +138,11 @@ export default function MenuPage() {
   }, []);
 
   const handleClick = (e, modal) => {
+    buttonSound.currentTime = 0;
+    buttonSound.play().catch((err) => {
+      console.warn("Audio play failed:", err);
+    });
+
     const btn = e.currentTarget;
     btn.classList.remove("clicked");
     void btn.offsetWidth;
@@ -206,7 +273,6 @@ export default function MenuPage() {
 
       {/* Footer Logo */}
       <Box
-        onClick={() => router.push("/login")}
         sx={{
           position: "absolute",
           bottom: 0,
@@ -216,7 +282,7 @@ export default function MenuPage() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          py: 2,
+          py: 1,
           cursor: "pointer",
         }}
       >

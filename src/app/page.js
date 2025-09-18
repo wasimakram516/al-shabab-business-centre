@@ -121,7 +121,6 @@ export default function HomePage() {
 
       {/* Footer Logo */}
       <Box
-        onClick={() => router.push("/login")}
         sx={{
           position: "absolute",
           bottom: 0,
