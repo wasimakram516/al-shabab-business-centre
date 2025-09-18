@@ -21,105 +21,66 @@ import { useRouter } from "next/navigation";
 const buttonsConfig = [
   {
     text: "Photos",
-    size: { xs: "8rem", sm: "22rem", md: "22rem", lg: "28rem", xl: "34rem" },
+    size: "clamp(8rem, 28vw, 28rem)",
     x: "15%",
     y: "33%",
     icon: (
       <CameraAltIcon
-        sx={{
-          fontSize: {
-            xs: "3rem",
-            sm: "5rem",
-            md: "8rem",
-            lg: "10rem",
-            xl: "12rem",
-          },
-        }}
+        sx={{ fontSize: "clamp(3rem, 10vw, 12rem)" }}
       />
     ),
     delay: "0s",
   },
   {
     text: "Brochure",
-    size: { xs: "10rem", sm: "28rem", md: "22rem", lg: "28rem", xl: "36rem" },
+    size: "clamp(10rem, 33vw, 32rem)",
     x: "52%",
     y: "40%",
     icon: (
       <MenuBookIcon
-        sx={{
-          fontSize: {
-            xs: "4rem",
-            sm: "6rem",
-            md: "10rem",
-            lg: "12rem",
-            xl: "14rem",
-          },
-        }}
+        sx={{ fontSize: "clamp(4rem, 12vw, 14rem)" }}
       />
     ),
     delay: "1s",
   },
   {
     text: "Video",
-    size: { xs: "8rem", sm: "22rem", md: "22rem", lg: "28rem", xl: "34rem" },
+    size: "clamp(8rem, 28vw, 28rem)",
     x: "10%",
     y: "56%",
     icon: (
       <PlayCircleFilledIcon
-        sx={{
-          fontSize: {
-            xs: "3rem",
-            sm: "5rem",
-            md: "8rem",
-            lg: "10rem",
-            xl: "12rem",
-          },
-        }}
+        sx={{ fontSize: "clamp(3rem, 10vw, 12rem)" }}
       />
     ),
     delay: "2s",
   },
   {
     text: "Location",
-    size: { xs: "8rem", sm: "22rem", md: "22rem", lg: "28rem", xl: "34rem" },
+    size: "clamp(8rem, 28vw, 28rem)",
     x: "55%",
     y: "68%",
     icon: (
       <LocationOnIcon
-        sx={{
-          fontSize: {
-            xs: "3rem",
-            sm: "5rem",
-            md: "8rem",
-            lg: "10rem",
-            xl: "12rem",
-          },
-        }}
+        sx={{ fontSize: "clamp(3rem, 10vw, 12rem)" }}
       />
     ),
     delay: "1.5s",
   },
   {
     text: "Sign-Up",
-    size: { xs: "8rem", sm: "22rem", md: "22rem", lg: "28rem", xl: "34rem" },
+    size: "clamp(8rem, 28vw, 28rem)",
     x: "15%",
     y: "80%",
     icon: (
       <HowToRegIcon
-        sx={{
-          fontSize: {
-            xs: "3rem",
-            sm: "5rem",
-            md: "8rem",
-            lg: "10rem",
-            xl: "12rem",
-          },
-        }}
+        sx={{ fontSize: "clamp(3rem, 10vw, 12rem)" }}
       />
     ),
     delay: "2.5s",
   },
 ];
+
 
 export default function MenuPage() {
   const router = useRouter();
@@ -248,7 +209,7 @@ export default function MenuPage() {
               flexDirection: "column",
               background: "radial-gradient(circle at 30% 30%, #333, #000)",
               color: "#fff",
-              fontSize: { xs: "1rem", sm: "1.5rem", md: "2.5rem" },
+              fontSize: "clamp(1rem, 4vw, 3rem)",
               textTransform: "capitalize",
               border: "3px solid white",
               boxShadow:
