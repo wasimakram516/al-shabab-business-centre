@@ -1,4 +1,4 @@
-package om.whitewall.alshabab;
+package com.whitewall.alshabab;
 
 import com.getcapacitor.BridgeActivity;
 

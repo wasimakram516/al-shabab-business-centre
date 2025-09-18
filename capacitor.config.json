@@ -1,0 +1,10 @@
+{
+  "appId": "com.whitewall.alshabab",
+  "appName": "Al Shabab",
+  "webDir": "out",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://al-shabab-whitewall.vercel.app",
+    "cleartext": true
+  }
+}

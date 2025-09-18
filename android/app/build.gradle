@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "om.whitewall.alshabab"
+    namespace "com.whitewall.alshabab"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "om.whitewall.alshabab"
+        applicationId "com.whitewall.alshabab"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
