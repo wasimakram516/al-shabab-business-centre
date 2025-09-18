@@ -1,21 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
   IconButton,
   Box,
+  Typography,
+  Paper,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 
 export default function PhotosModal({ open, onClose, media }) {
   const images = media?.filter((m) => m.type === "image") || [];
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  if (images.length === 0) return null;
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
@@ -29,6 +29,17 @@ export default function PhotosModal({ open, onClose, media }) {
     setCurrentIndex(i);
   };
 
+  // Auto slideshow
+  useEffect(() => {
+    if (!open || images.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [open, images.length]);
+
+  if (images.length === 0) return null;
+
   return (
     <Dialog
       open={open}
@@ -41,33 +52,49 @@ export default function PhotosModal({ open, onClose, media }) {
           mt: "5%",
           mx: "auto",
           borderRadius: 2,
-          overflow: "hidden",
+          position: "relative",
+          overflow: "visible",
         },
       }}
     >
-      <DialogTitle>
-        Photos
-        <IconButton
-          onClick={onClose}
-          sx={{ position: "absolute", right: 8, top: 8 }}
-        >
-          <CloseIcon
-            sx={{
-              fontSize: "4rem",
-              color: "error.main",
-              backgroundColor: "rgba(255,255,255,0.8)",
-              borderRadius: "50%",
-              padding: "0.5rem",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                backgroundColor: "rgba(0,0,0,0.8)",
-                color: "#fff",
-              },
-            }}
-          />
-        </IconButton>
-      </DialogTitle>
+      {/* Floating label */}
+      <Paper
+        elevation={3}
+        sx={{
+          position: "absolute",
+          top: -20,
+          left: "50%",
+          transform: "translateX(-50%)",
+          bgcolor: "maroon",
+          color: "white",
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          px: 4,
+          py: 0.5,
+          borderRadius: "6px",
+          zIndex: 999,
+        }}
+      >
+        <PhotoCameraIcon fontSize="small" />
+        <Typography variant="subtitle1">Photos</Typography>
+      </Paper>
+
+      {/* Close button */}
+      <IconButton
+        onClick={onClose}
+        sx={{
+          position: "absolute",
+          right: 16,
+          top: 16,
+          color: "error.main",
+          zIndex: 999,
+          bgcolor: "rgba(255,255,255,0.8)",
+          "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
 
       <DialogContent
         dividers
@@ -142,7 +169,7 @@ export default function PhotosModal({ open, onClose, media }) {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            mb: 4,
+            mb: 3,
             gap: 1,
           }}
         >
@@ -151,10 +178,10 @@ export default function PhotosModal({ open, onClose, media }) {
               key={i}
               onClick={() => handleDotClick(i)}
               sx={{
-                width: 20,
-                height: 20,
+                width: 16,
+                height: 16,
                 borderRadius: "50%",
-                bgcolor: i === currentIndex ? "primary.main" : "grey.400",
+                bgcolor: i === currentIndex ? "maroon" : "grey.400",
                 cursor: "pointer",
                 transition: "all 0.3s ease",
               }}

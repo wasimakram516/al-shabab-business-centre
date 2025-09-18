@@ -1,6 +1,13 @@
 "use client";
-import { Dialog, DialogContent, IconButton } from "@mui/material";
+import {
+  Dialog,
+  DialogContent,
+  IconButton,
+  Paper,
+  Typography,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { useEffect, useState } from "react";
 
 export default function BrochureModal({ open, onClose, fileUrl }) {
@@ -63,30 +70,49 @@ export default function BrochureModal({ open, onClose, fileUrl }) {
           mt: "5%",
           mx: "auto",
           borderRadius: 2,
-          overflow: "hidden",
+          position: "relative",
+          overflow: "visible",
         },
       }}
       sx={{ "& .MuiDialog-container": { alignItems: "flex-start" } }}
     >
+      {/* Floating label */}
+      <Paper
+        elevation={3}
+        sx={{
+          position: "absolute",
+          top: -35,
+          left: "50%",
+          transform: "translateX(-50%)",
+          bgcolor: "maroon",
+          color: "white",
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          px: 4,
+          py: 0.5,
+          borderRadius: "6px",
+          zIndex: 999,
+        }}
+      >
+        <MenuBookIcon fontSize="small" />
+        <Typography variant="subtitle1">Brochure</Typography>
+      </Paper>
+
+      {/* Close button */}
       <IconButton
         onClick={onClose}
-        sx={{ position: "absolute", top: 8, right: 8, zIndex: 2000 }}
+        sx={{
+          position: "absolute",
+          right: 16,
+          top: 16,
+          color: "error.main",
+          zIndex: 999,
+          bgcolor: "rgba(255,255,255,0.8)",
+          "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+        }}
       >
-        <CloseIcon
-          sx={{
-            fontSize: "2.5rem",
-            color: "error.main",
-            backgroundColor: "rgba(255,255,255,0.8)",
-            borderRadius: "50%",
-            padding: "0.5rem",
-            cursor: "pointer",
-            transition: "all 0.3s ease",
-            "&:hover": {
-              backgroundColor: "rgba(0,0,0,0.8)",
-              color: "#fff",
-            },
-          }}
-        />
+        <CloseIcon />
       </IconButton>
 
       <DialogContent sx={{ p: 0, height: "100%" }}>

@@ -3,13 +3,15 @@ import { useState, useRef, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
+  Paper,
   IconButton,
   Box,
+  Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 
 export default function VideoModal({ open, onClose, media }) {
   const videos = media?.filter((m) => m.type === "video") || [];
@@ -51,33 +53,49 @@ export default function VideoModal({ open, onClose, media }) {
           mt: "5%",
           mx: "auto",
           borderRadius: 2,
-          overflow: "hidden",
+          position: "relative",
+          overflow: "visible",
         },
       }}
     >
-      <DialogTitle>
-        Video
-        <IconButton
-          onClick={onClose}
-          sx={{ position: "absolute", right: 8, top: 8 }}
-        >
-          <CloseIcon
-            sx={{
-              fontSize: "2rem",
-              color: "error.main",
-              backgroundColor: "rgba(255,255,255,0.8)",
-              borderRadius: "50%",
-              padding: "0.5rem",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                backgroundColor: "rgba(0,0,0,0.8)",
-                color: "#fff",
-              },
-            }}
-          />
-        </IconButton>
-      </DialogTitle>
+      {/* Floating label */}
+      <Paper
+        elevation={3}
+        sx={{
+          position: "absolute",
+          top: -20,
+          left: "50%",
+          transform: "translateX(-50%)",
+          bgcolor: "maroon",
+          color: "white",
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          px: 4,
+          py: 0.5,
+          borderRadius: "6px",
+          zIndex: 999,
+        }}
+      >
+        <PlayCircleFilledIcon fontSize="small" />
+        <Typography variant="subtitle1">Video</Typography>
+      </Paper>
+
+      {/* Close button */}
+      <IconButton
+        onClick={onClose}
+        sx={{
+          position: "absolute",
+          right: 16,
+          top: 16,
+          color: "error.main",
+          zIndex: 999,
+          bgcolor: "rgba(255,255,255,0.8)",
+          "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+        }}
+      >
+        <CloseIcon />
+      </IconButton>
 
       <DialogContent
         dividers
@@ -97,6 +115,8 @@ export default function VideoModal({ open, onClose, media }) {
             autoPlay
             style={{
               width: "100%",
+              height: "auto",
+              maxHeight: "80vh",
               borderRadius: "8px",
             }}
           />
@@ -150,12 +170,15 @@ export default function VideoModal({ open, onClose, media }) {
                 {videos.map((_, i) => (
                   <Box
                     key={i}
+                    onClick={() => setCurrentIndex(i)}
                     sx={{
-                      width: 10,
-                      height: 10,
+                      width: 12,
+                      height: 12,
                       borderRadius: "50%",
+                      cursor: "pointer",
                       bgcolor:
-                        i === currentIndex ? "white" : "rgba(255,255,255,0.5)",
+                        i === currentIndex ? "maroon" : "rgba(255,255,255,0.5)",
+                      transition: "all 0.3s ease",
                     }}
                   />
                 ))}
