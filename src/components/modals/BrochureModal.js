@@ -70,9 +70,10 @@ export default function BrochureModal({ open, onClose, fileUrl }) {
       <DialogContent sx={{ p: 0, height: "100%" }}>
         {fileUrl ? (
           <iframe
-            src={fileUrl}
+            src={`https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(
+              fileUrl
+            )}`}
             style={{ width: "100%", height: "100%", border: "none" }}
-            title="PDF Brochure"
           />
         ) : (
           <p style={{ textAlign: "center", marginTop: "2rem" }}>
