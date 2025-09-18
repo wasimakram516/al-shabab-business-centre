@@ -2,14 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { Box } from "@mui/material";
-import LoginIcon from "@mui/icons-material/Login";
 import { useState } from "react";
 
 export default function HomePage() {
   const router = useRouter();
   const [clicked, setClicked] = useState(false);
 
-  const handleClick = () => {
+  const handleBackgroundClick = () => {
     setClicked(true);
     setTimeout(() => setClicked(false), 400);
     router.push("/menu");
@@ -17,13 +16,11 @@ export default function HomePage() {
 
   return (
     <Box
-      onClick={handleClick}
       sx={{
         position: "relative",
         width: "100%",
         height: "100vh",
         overflow: "hidden",
-        cursor: "pointer",
       }}
     >
       {/* Background Video */}
@@ -57,87 +54,74 @@ export default function HomePage() {
         }}
       />
 
-      {/* Login Button */}
+      {/* Clickable overlay (everything except footer) */}
       <Box
+        onClick={handleBackgroundClick}
         sx={{
           position: "absolute",
-          top: "2%",
-          right: "2%",
-          zIndex: 10,
+          inset: 0,
+          cursor: "pointer",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        <LoginIcon
+        {/* Top Logo */}
+        <Box
           sx={{
-            fontSize: "4rem",
-            color: "#000",
-            backgroundColor: "rgba(255,255,255,0.8)",
-            borderRadius: "50%",
-            padding: "0.5rem",
-            cursor: "pointer",
-            transition: "all 0.3s ease",
-            "&:hover": {
-              backgroundColor: "rgba(0,0,0,0.8)",
-              color: "#fff",
-            },
+            position: "absolute",
+            top: "5%",
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
-          onClick={(e) => {
-            e.stopPropagation();
-            router.push("/login");
+        >
+          <img
+            src="/AlShababLogo.png"
+            alt="Al Shabab Logo"
+            style={{ width: "60vw" }}
+          />
+        </Box>
+
+        {/* Tap Here */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: "30%",
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
-        />
-      </Box>
+        >
+          <img
+            src="/TapHere.png"
+            alt="Tap Here"
+            style={{
+              width: "70vw",
+              animation: clicked
+                ? "pulse 0.4s ease"
+                : "breathing 2s ease-in-out infinite",
+            }}
+          />
+        </Box>
 
-      {/* Top Logo */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: "5%",
-          left: "50%",
-          transform: "translateX(-50%)",
-        }}
-      >
-        <img
-          src="/AlShababLogo.png"
-          alt="Al Shabab Logo"
-          style={{ width: "60vw" }}
-        />
-      </Box>
-
-      {/* Tap Here with breathing + click pulse */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: "30%",
-          left: "50%",
-          transform: "translateX(-50%)",
-        }}
-      >
-        <img
-          src="/TapHere.png"
-          alt="Tap Here"
-          style={{
-            width: "70vw",
-            animation: clicked
-              ? "pulse 0.4s ease"
-              : "breathing 2s ease-in-out infinite",
+        {/* Finger GIF */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: "45%",
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
-        />
-      </Box>
-
-      {/* Finger GIF */}
-      <Box
-        sx={{
-          position: "absolute",
-          top: "45%",
-          left: "50%",
-          transform: "translateX(-50%)",
-        }}
-      >
-        <img src="/FingerGif.gif" alt="Finger Tap" style={{ width: "80vw" }} />
+        >
+          <img
+            src="/FingerGif.gif"
+            alt="Finger Tap"
+            style={{ width: "80vw" }}
+          />
+        </Box>
       </Box>
 
       {/* Footer Logo */}
       <Box
+        onClick={() => router.push("/login")}
         sx={{
           position: "absolute",
           bottom: 0,
@@ -148,6 +132,7 @@ export default function HomePage() {
           justifyContent: "center",
           alignItems: "center",
           py: 2,
+          cursor: "pointer",
         }}
       >
         <img
@@ -157,7 +142,7 @@ export default function HomePage() {
         />
       </Box>
 
-      {/* 🔑 Keyframes */}
+      {/* Keyframes */}
       <style jsx>{`
         @keyframes breathing {
           0% {

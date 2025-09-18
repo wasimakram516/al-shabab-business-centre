@@ -16,51 +16,53 @@ import BrochureModal from "@/components/modals/BrochureModal";
 import VideoModal from "@/components/modals/VideoModal";
 import LocationModal from "@/components/modals/LocationModal";
 import SignupModal from "@/components/modals/SignupModal";
+import { useRouter } from "next/navigation";
 
 const buttonsConfig = [
   {
     text: "Photos",
-    size: "22rem",
+    size: "clamp(8rem, 20vw, 22rem)",
     x: "15%",
     y: "33%",
-    icon: <CameraAltIcon sx={{ fontSize: "8rem" }} />,
+    icon: <CameraAltIcon sx={{ fontSize: { xs: "3rem", sm: "5rem", md: "8rem" } }} />,
     delay: "0s",
   },
   {
     text: "Brochure",
-    size: "28rem",
+    size: "clamp(10rem, 25vw, 28rem)",
     x: "52%",
     y: "40%",
-    icon: <MenuBookIcon sx={{ fontSize: "10rem" }} />,
+    icon: <MenuBookIcon sx={{ fontSize: { xs: "4rem", sm: "6rem", md: "10rem" } }} />,
     delay: "1s",
   },
   {
     text: "Video",
-    size: "22rem",
+    size: "clamp(8rem, 20vw, 22rem)",
     x: "10%",
     y: "56%",
-    icon: <PlayCircleFilledIcon sx={{ fontSize: "8rem" }} />,
+    icon: <PlayCircleFilledIcon sx={{ fontSize: { xs: "3rem", sm: "5rem", md: "8rem" } }} />,
     delay: "2s",
   },
   {
     text: "Location",
-    size: "22rem",
+    size: "clamp(8rem, 20vw, 22rem)",
     x: "55%",
     y: "68%",
-    icon: <LocationOnIcon sx={{ fontSize: "8rem" }} />,
+    icon: <LocationOnIcon sx={{ fontSize: { xs: "3rem", sm: "5rem", md: "8rem" } }} />,
     delay: "1.5s",
   },
   {
     text: "Sign-Up",
-    size: "22rem",
+    size: "clamp(8rem, 20vw, 22rem)",
     x: "15%",
     y: "80%",
-    icon: <HowToRegIcon sx={{ fontSize: "8rem" }} />,
+    icon: <HowToRegIcon sx={{ fontSize: { xs: "3rem", sm: "5rem", md: "8rem" } }} />,
     delay: "2.5s",
   },
 ];
 
 export default function MenuPage() {
+  const router = useRouter();
   const [config, setConfig] = useState(null);
   const [openModal, setOpenModal] = useState(null);
 
@@ -170,7 +172,7 @@ export default function MenuPage() {
               flexDirection: "column",
               background: "radial-gradient(circle at 30% 30%, #333, #000)",
               color: "#fff",
-              fontSize: "2.5rem",
+              fontSize: { xs: "1rem", sm: "1.5rem", md: "2.5rem" },
               textTransform: "capitalize",
               border: "3px solid white",
               boxShadow:
@@ -204,6 +206,7 @@ export default function MenuPage() {
 
       {/* Footer Logo */}
       <Box
+        onClick={() => router.push("/login")}
         sx={{
           position: "absolute",
           bottom: 0,
@@ -214,12 +217,13 @@ export default function MenuPage() {
           justifyContent: "center",
           alignItems: "center",
           py: 2,
+          cursor: "pointer",
         }}
       >
         <img
           src="/WWDSLogo.png"
           alt="WhiteWall Logo"
-          style={{ width: "40vw", maxWidth: "280px", objectFit: "contain" }}
+          style={{ width: "50vw", objectFit: "contain" }}
         />
       </Box>
 
