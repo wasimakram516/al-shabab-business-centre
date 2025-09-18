@@ -145,10 +145,12 @@ export default function MenuPage() {
   }, []);
 
   const handleClick = (e, modal) => {
-    buttonSound.currentTime = 0;
-    buttonSound.play().catch((err) => {
-      console.warn("Audio play failed:", err);
-    });
+    if (buttonSound) {
+      buttonSound.currentTime = 0;
+      buttonSound
+        .play()
+        .catch((err) => console.warn("Audio play failed:", err));
+    }
 
     const btn = e.currentTarget;
     btn.classList.remove("clicked");
