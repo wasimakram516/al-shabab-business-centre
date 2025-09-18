@@ -127,8 +127,15 @@ export default function MenuPage() {
   const [openModal, setOpenModal] = useState(null);
 
   // preload sound
-  const [buttonSound] = useState(() => new Audio("/buttonSound.wav"));
+  const [buttonSound, setButtonSound] = useState(null);
+
   useInactivityRedirect(3 * 60 * 1000, "/"); // 3 minutes inactivity redirect to home
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setButtonSound(new Audio("/buttonSound.wav"));
+    }
+  }, []);
 
   useEffect(() => {
     fetch("/api/config")
