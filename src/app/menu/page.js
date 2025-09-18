@@ -189,7 +189,7 @@ export default function MenuPage() {
               },
               "@keyframes floatY": {
                 "0%, 100%": { transform: "translateY(0)" },
-                "50%": { transform: "translateY(-25px)" },
+                "50%": { transform: "translateY(-22px)" },
               },
               "@keyframes clickPulse": {
                 "0%": { transform: "scale(1)" },
